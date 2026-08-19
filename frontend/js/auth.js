@@ -3,15 +3,12 @@ if (!user) {
   window.location = "login.html";
 }*/
 
-
- // Change to your backend URL if different
-
 async function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
-    const res = await fetch(`http://localhost:5000/auth/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -31,15 +28,14 @@ async function login() {
 
   } catch (err) {
     console.error("Login error:", err);
-    alert("Server is down. Make sure Node.js is running.");
+    alert("Server is down or unreachable.");
   }
-}async function register() {
+}
 
-  
+async function register() {
   const name = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-
   const matric_no = document.getElementById("matric_no").value;
 
   if (!name || !email || !password || !matric_no) {
@@ -48,7 +44,7 @@ async function login() {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/auth/register`, {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ name, email, password, matric_no })
@@ -57,6 +53,11 @@ async function login() {
     const data = await res.json();
 
     console.log("REGISTER RESPONSE:", data);
+
+    if (!res.ok) {
+      alert(data.error || data || "Registration failed");
+      return;
+    }
 
     alert("Account created ✅");
 
@@ -68,4 +69,3 @@ async function login() {
     alert("Error creating account");
   }
 }
-

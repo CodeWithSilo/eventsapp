@@ -1,4 +1,3 @@
-
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
@@ -29,7 +28,7 @@ async function loadPosts() {
                 <p>${post.description || "-"}</p>
                 <p>${post.caption || ""}</p>
 
-                ${post.image ? `<img src="/uploads/${post.image}" style="width:100%; border-radius:10px;">` : ""}
+                ${post.image ? `<img src="${BASE_URL}/uploads/${post.image}" style="width:100%; border-radius:10px;">` : ""}
 
                 <button onclick="likePost(${post.id})">
                     ❤️ ${post.likes || 0}
@@ -47,7 +46,7 @@ async function loadPosts() {
 async function likePost(post_id) {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    await fetch(`http://localhost:5000/posts/like/${post_id}`, {
+    await fetch(`${BASE_URL}/posts/like/${post_id}`, {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ user_id: user.id })
@@ -61,7 +60,11 @@ async function createPost(e) {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("image", document.getElementById("image").files[0]);
+    const imageFile = document.getElementById("image").files[0];
+    if (imageFile) {
+        formData.append("image", imageFile);
+    }
+    
     formData.append("caption", document.getElementById("caption").value);
     formData.append("title", document.getElementById("title").value);
     formData.append("location", document.getElementById("location").value);
@@ -70,13 +73,22 @@ async function createPost(e) {
     formData.append("description", document.getElementById("description").value);
     formData.append("user_id", user.id);
 
-    await fetch(`http://localhost:5000/posts/upload`, {
-        method: "POST",
-        body: formData
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/posts/upload`, {
+            method: "POST",
+            body: formData
+        });
 
-    alert("Post uploaded ✅");
-    window.location = "feed.html";
+        if (!res.ok) {
+            throw new Error("Failed to upload post");
+        }
+
+        alert("Post uploaded ✅");
+        window.location = "feed.html";
+    } catch (err) {
+        console.error("Error creating post:", err);
+        alert("Error creating post");
+    }
 }
 
 // ================= INIT =================

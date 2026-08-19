@@ -1,4 +1,3 @@
-
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
@@ -6,9 +5,7 @@ if (!user) {
 }
 
 async function loadMap() {
-
-  navigator.geolocation.getCurrentPosition(async(position)=>{
-
+  navigator.geolocation.getCurrentPosition(async(position) => {
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
 
@@ -23,25 +20,25 @@ async function loadMap() {
       title: "You"
     });
 
-    // LOAD EVENTS
-    const res = await fetch(`${BASE_URL}/events`);
-    const events = await res.json();
+    // LOAD EVENTS from your live backend
+    try {
+      const res = await fetch(`${BASE_URL}/events`);
+      const events = await res.json();
 
-    events.forEach(event => {
-
-      new google.maps.Marker({
-        position: {
-          lat: parseFloat(event.latitude),
-          lng: parseFloat(event.longitude)
-        },
-        map,
-        title: event.title
+      events.forEach(event => {
+        new google.maps.Marker({
+          position: {
+            lat: parseFloat(event.latitude),
+            lng: parseFloat(event.longitude)
+          },
+          map,
+          title: event.title
+        });
       });
-
-    });
-
+    } catch (err) {
+      console.error("Error loading map events:", err);
+    }
   });
-
 }
 
 loadMap();

@@ -1,4 +1,3 @@
-
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
@@ -7,7 +6,6 @@ if (!user) {
 
 
 async function createNewEvent() {
-
     const event = {
         title: document.getElementById("title").value,
         description: document.getElementById("description").value,
@@ -18,11 +16,23 @@ async function createNewEvent() {
         time: document.getElementById("time").value
     };
 
-    await fetch(`http://localhost:5000/events`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(event)
-    });
+    try {
+        const res = await fetch(`${API_URL}/events`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(event)
+        });
 
-    alert("Event created ✅");
+        if (!res.ok) {
+            const errorData = await res.json();
+            alert(errorData.error || "Failed to create event");
+            return;
+        }
+
+        alert("Event created ✅");
+        // Optionally redirect or clear the form here
+    } catch (err) {
+        console.error("Error creating event:", err);
+        alert("Server error while creating event.");
+    }
 }

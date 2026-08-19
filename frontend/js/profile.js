@@ -1,5 +1,3 @@
-
-
 // Retrieve user session early
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
