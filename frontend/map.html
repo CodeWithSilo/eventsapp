@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Map - Campus Feed</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ================= NAVIGATION ================= */
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #000;
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        nav button {
+            background: transparent;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s ease;
+        }
+
+        nav button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* ================= FULL PAGE MAP ================= */
+
+        #map {
+            width: 100%;
+            flex: 1;
+            z-index: 1;
+        }
+
+        /* Dark Mode Styling for Leaflet Map Tiles */
+        .leaflet-tile {
+            filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+        }
+
+        .leaflet-container {
+            background: #111 !important;
+        }
+
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #111 !important;
+            color: #fff !important;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 500px) {
+            nav button {
+                font-size: 10px;
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <button onclick="location.href='feed.html'">🏠 Feed</button>
+        <button onclick="location.href='create-post.html'">➕ Post</button>
+        <button onclick="location.href='map.html'">📍 Map</button>
+        <button onclick="location.href='inbox.html'">✉️ Inbox</button>
+        <button onclick="location.href='profile.html'">👤 Profile</button>
+    </nav>
+
+    <div id="map"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize map with fallback coordinates
+    const map = L.map('map', {
+        zoomControl: false // Positioned below custom buttons if needed
+    }).setView([9.05785, 7.49508], 13);
+
+    // Add Zoom Controls to top right
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Dark map tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let userMarker, accuracyCircle;
+
+    // Custom CSS Pulsing Pinpoint Marker for your device location
+    const userIcon = L.divIcon({
+        className: 'custom-user-pin',
+        html: `<div style="
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+        "></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+    });
+
+    // Function to locate device and map marker
+    function locateDevice(zoomToLocation = true) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude: lat, longitude: lng, accuracy } = position.coords;
+
+                    // Update or create user location marker
+                    if (userMarker) {
+                        userMarker.setLatLng([lat, lng]);
+                        accuracyCircle.setLatLng([lat, lng]).setRadius(accuracy);
+                    } else {
+                        userMarker = L.marker([lat, lng], { icon: userIcon })
+                            .addTo(map)
+                            .bindPopup("<b>📍 Your Device Location</b><br>Accurate within " + Math.round(accuracy) + " meters.");
+
+                        accuracyCircle = L.circle([lat, lng], {
+                            color: '#3b82f6',
+                            fillColor: '#3b82f6',
+                            fillOpacity: 0.15,
+                            radius: accuracy
+                        }).addTo(map);
+                    }
+
+                    if (zoomToLocation) {
+                        map.setView([lat, lng], 16);
+                        userMarker.openPopup();
+                    }
+                },
+                (error) => {
+                    console.warn("Geolocation error:", error.message);
+                    alert("Unable to detect device location. Please ensure location/GPS access is allowed in your browser settings.");
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+
+    // Auto-trigger on page load
+    locateDevice(true);
+
+    // Re-calculate map boundaries dynamically
+    setTimeout(() => { map.invalidateSize(); }, 200);
+
+    // Fetch & load existing database events
+    async function loadEvents() {
+        try {
+            const res = await fetch(`${BASE_URL}/events`);
+            const events = await res.json();
+
+            events.forEach(e => {
+                if (e.lat && e.lng) {
+                    L.marker([e.lat, e.lng])
+                        .addTo(map)
+                        .bindPopup(`<b>${e.name}</b><br>${e.description}`);
+                }
+            });
+        } catch (err) {
+            console.error("Error loading events:", err);
+        }
+    }
+
+    loadEvents();
+</script>
+</body>
+</html>

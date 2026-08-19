@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-y: auto;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* ================= NAVIGATION ================= */
+
+        header {
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #000;
+            border-bottom: 1px solid #262626;
+        }
+
+        nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 12px 10px;
+            background: #000;
+        }
+
+        nav button {
+            background: transparent;
+            color: #a3a3a3;
+            border: 1px solid transparent;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        nav button i {
+            font-size: 0.95rem;
+        }
+
+        nav button:hover {
+            color: #000;
+            background: #fff;
+            border-color: #fff;
+        }
+
+        /* ================= PAGE TITLE ================= */
+
+        h2 {
+            text-align: center;
+            color: #fff;
+            margin: 25px 0 15px;
+            font-size: 1.5rem;
+        }
+
+        /* ================= FORM ================= */
+
+        #postForm {
+            width: 90%;
+            max-width: 550px;
+            margin: 0 auto 40px;
+            padding: 25px;
+            background: #111;
+            border: 1px solid #262626;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.04);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= INPUTS ================= */
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #fff;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #777;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ================= FILE INPUT ================= */
+
+        input[type="file"] {
+            background: #0a0a0a;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* ================= POST BUTTON ================= */
+
+        button.post-btn,
+        #postForm button[type="submit"] {
+            margin-top: 18px;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            background: #fff;
+            color: #000;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        button.post-btn:hover,
+        #postForm button[type="submit"]:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ================= MOBILE RESPONSIVENESS ================= */
+
+        @media (max-width: 500px) {
+            nav {
+                padding: 10px 4px;
+            }
+
+            nav button {
+                font-size: 0.75rem;
+                padding: 6px 8px;
+                gap: 4px;
+            }
+
+            nav button i {
+                font-size: 0.85rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+                margin-top: 20px;
+            }
+
+            #postForm {
+                width: calc(100% - 24px);
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 100% Width Black and White Header -->
+    <header>
+        <nav>
+            <button onclick="location.href='feed.html'">
+                <i class="fa-solid fa-house"></i>
+                <span>Feed</span>
+            </button>
+            <button onclick="location.href='create-post.html'">
+                <i class="fa-solid fa-square-plus"></i>
+                <span>Post</span>
+            </button>
+            <button onclick="location.href='inbox.html'">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Inbox</span>
+            </button>
+            <button onclick="location.href='profile.html'">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </header>
+
+    <h2>Create Post</h2>
+
+    <form id="postForm" enctype="multipart/form-data">
+        <input type="text" name="title" id="title" placeholder="Event Title" required>
+        <input type="text" name="location" id="location" placeholder="Location" required>
+        <input type="date" name="date" id="date" required>
+        <input type="time" name="time" id="time" required>
+        <textarea name="description" id="description" placeholder="Description"></textarea>
+        <input type="file" name="image" id="image" accept="image/*" required>
+        
+        <button type="submit">Post</button>
+    </form>
+
+    <script src="js/config.js"></script>
+    <script src="js/post.js"></script>
+
+    <script>
+    document.getElementById("postForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (!user) {
+            alert("Please login first");
+            return;
+        }
+
+        formData.append("user_id", user.id);
+
+        try {
+            const res = await fetch(`${BASE_URL}/posts/upload`, {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                alert("Error: " + data.error);
+                return;
+            }
+
+            console.log("POST CREATED:", data);
+            alert("Post created ✅");
+            window.location = "feed.html";
+
+        } catch (err) {
+            console.error("FRONTEND ERROR:", err);
+            alert("Something went wrong");
+        }
+    });
+    </script>
+</body>
+</html>

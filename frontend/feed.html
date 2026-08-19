@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Feed</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' http://localhost:5000 data:; connect-src 'self' http://localhost:5000;">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Standard Page Scrollability */
+    html, body {
+      background: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    /* ================= 100% WIDTH MONOCHROME NAVIGATION ================= */
+    header {
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #000000;
+      border-bottom: 1px solid #262626;
+    }
+
+    nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      padding: 12px 10px;
+      background: #000000;
+    }
+
+    nav button {
+      background: transparent;
+      color: #a3a3a3;
+      border: 1px solid transparent;
+      padding: 8px 14px;
+      border-radius: 8px; /* Updated border radius */
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    nav button i {
+      font-size: 0.95rem;
+    }
+
+    nav button:hover {
+      color: #000000;
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    /* ================= FULL-WIDTH SEARCH BAR ================= */
+    #searchBarContainer {
+      width: 100%;
+      background: #000000;
+      border-bottom: 1px solid #262626;
+      transition: all 0.3s ease;
+    }
+
+    .search-inner {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #737373;
+      font-size: 0.85rem;
+    }
+
+    #matricSearch {
+      width: 100%;
+      background: #0a0a0a;
+      color: #ffffff;
+      border: 1px solid #262626;
+      padding: 10px 14px 10px 38px;
+      border-radius: 8px; /* Updated border radius */
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    #matricSearch::placeholder {
+      color: #525252;
+    }
+
+    #matricSearch:focus {
+      border-color: #ffffff;
+    }
+
+    .search-btn {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px; /* Updated border radius */
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover {
+      opacity: 0.88;
+    }
+
+    /* ================= FEED CONTAINER ================= */
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    #feed {
+      width: 100%;
+    }
+
+    /* ================= MOBILE RESPONSIVENESS ================= */
+    @media (max-width: 500px) {
+      nav {
+        padding: 10px 4px;
+      }
+
+      nav button {
+        font-size: 0.75rem;
+        padding: 6px 8px;
+        gap: 4px;
+      }
+
+      nav button i {
+        font-size: 0.85rem;
+      }
+
+      .container {
+        padding: 12px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 100% Width Black and White Sticky Header -->
+  <header>
+    <nav>
+      <button onclick="location.href='feed.html'">
+        <i class="fa-solid fa-house"></i>
+        <span>Feed</span>
+      </button>
+      <button onclick="location.href='create-post.html'">
+        <i class="fa-solid fa-square-plus"></i>
+        <span>Post</span>
+      </button>
+      <button onclick="location.href='inbox.html'">
+        <i class="fa-solid fa-paper-plane"></i>
+        <span>Inbox</span>
+      </button>
+      <button onclick="location.href='profile.html'">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+      </button>
+      <button onclick="toggleSearch()">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Search</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Expandable Search Bar Drawer -->
+  <div id="searchBarContainer" style="display: none;">
+    <div class="search-inner">
+      <div class="search-input-wrapper">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input 
+          type="text" 
+          id="matricSearch" 
+          placeholder="Search by Matric No..." 
+          onkeypress="if(event.key === 'Enter') executeSearch()"
+        />
+      </div>
+      <button onclick="executeSearch()" class="search-btn">
+        Search
+      </button>
+    </div>
+  </div>
+
+  <!-- Feed Card Layout Container -->
+  <main class="container">
+    <div id="feed"></div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/feed.js"></script>
+</body>
+</html>

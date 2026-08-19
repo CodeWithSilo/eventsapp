@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Campus Feed</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 35px 25px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.03);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= LOGO ================= */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #fff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        /* ================= INPUTS & BUTTONS ================= */
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #000;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #fff;
+        }
+
+        input::placeholder {
+            color: #777;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            background: #fff;
+            color: #000;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background: #ccc;
+            transform: scale(1.01);
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #ccc;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 18px;
+            }
+
+            .logo h1 {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo">
+            <div class="logo-icon">NSUK</div>
+            <h1>CAMPUS FEED</h1>
+        </div>
+
+        <h2>Create Account</h2>
+
+        <input id="name" placeholder="Full Name" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <input id="matric_no" placeholder="Matric Number" required>
+        <input id="password" type="password" placeholder="Password" required>
+
+        <button onclick="register()">Register</button>
+
+        <p>Already have an account? 
+            <a href="login.html">Login</a>
+        </p>
+    </div>
+
+    <!-- Global Config & Auth JS -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
