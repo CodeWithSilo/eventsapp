@@ -158,8 +158,8 @@ router.get("/:id", async (req, res) => {
       LEFT JOIN likes ON posts.id = likes.post_id
       WHERE posts.id = $1
       GROUP BY posts.id, users.name, users.profile_image, posts.user_id, posts.event_id, 
-               posts.caption, posts.title, posts.location, posts.date, posts.time, 
-               posts.description, posts.image, posts.created_at
+             posts.caption, posts.title, posts.location, posts.date, posts.time, 
+             posts.description, posts.image, posts.created_at
     `, [id]);
 
     if (postQuery.rows.length === 0) {
@@ -201,7 +201,18 @@ router.get("/user/:userId", async (req, res) => {
       LEFT JOIN likes ON posts.id = likes.post_id
       WHERE posts.user_id = $1
       GROUP BY 
-        posts.id,                    
+        posts.id,
+        posts.user_id,
+        posts.event_id,
+        posts.caption,
+        posts.title,
+        posts.location,
+        posts.date,
+        posts.time,
+        posts.description,
+        posts.image,
+        posts.visibility,
+        posts.created_at,
         users.name, 
         users.profile_image
       ORDER BY posts.created_at DESC
