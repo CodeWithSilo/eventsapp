@@ -204,7 +204,7 @@ async function updateVisibility(postId, newStatus) {
 function logout() {
     if (confirm("Are you sure you want to log out?")) {
         localStorage.clear();
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     }
 }
 
@@ -229,7 +229,7 @@ async function handleDeleteAccount() {
         if (res.ok) {
             alert("Your account has been deleted successfully.");
             localStorage.clear();
-            window.location.href = 'login.html'; 
+            window.location.href = 'index.html'; 
         } else {
             const errorData = await res.json();
             alert("Error: " + (errorData.error || "Could not delete account."));
