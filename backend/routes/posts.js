@@ -202,4 +202,46 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+// ===================== GET SINGLE POST BY ID =====================
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const postQuery = await pool.query(`
+      SELECT posts.id, posts.user_id, posts.event_id, posts.caption, posts.title, posts.location,
+             posts.date, posts.time, posts.description, posts.image, posts.created_at,
+             users.name, users.profile_image,
+             COUNT(likes.id) AS likes
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      LEFT JOIN likes ON posts.id = likes.post_id
+      WHERE posts.id = $1
+      GROUP BY posts.id, users.name, users.profile_image, posts.user_id, posts.event_id, 
+               posts.caption, posts.title, posts.location, posts.date, posts.time, 
+               posts.description, posts.image, posts.created_at
+    `, [id]);
+
+    if (postQuery.rows.length === 0) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const post = postQuery.rows[0];
+
+    const comments = await pool.query(`
+      SELECT comments.*, users.name, users.profile_image
+      FROM comments
+      JOIN users ON comments.user_id = users.id
+      WHERE comments.post_id = $1
+      ORDER BY comments.id DESC
+    `, [id]);
+
+    post.comments = comments.rows;
+
+    res.json(post);
+  } catch (err) {
+    console.error("GET SINGLE POST ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
