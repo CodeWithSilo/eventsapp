@@ -25,15 +25,15 @@ router.post("/register", async (req, res) => {
         const hash = await bcrypt.hash(password, 10);
 
         const user = await pool.query(
-            "INSERT INTO users(name,email,password,matric_no) VALUES($1,$2,$3,$4) RETURNING *",
+            "INSERT INTO users(name, email, password, matric_no) VALUES($1, $2, $3, $4) RETURNING *",
             [name, email, hash, matric_no]
         );
 
         res.json(user.rows[0]);
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json("Error registering user");
+        console.error("REGISTER ERROR:", err);
+        res.status(500).json({ error: "Error registering user" });
     }
 });
 
@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
         const { email, password } = req.body;
 
         const user = await pool.query(
-            "SELECT * FROM users WHERE email=$1",
+            "SELECT * FROM users WHERE email = $1",
             [email]
         );
 
@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
 
         res.json(user.rows[0]);
 
-    } catch(err){
+    } catch (err) {
         console.error("LOGIN ERROR:", err);
         res.status(500).json({ error: "Login error" });
     }
@@ -71,18 +71,21 @@ router.post("/login", async (req, res) => {
 router.post("/upload-profile", upload.single("image"), async (req, res) => {
     try {
         const { user_id } = req.body;
+        if (!req.file) {
+            return res.status(400).json({ error: "No image file provided" });
+        }
         const image = req.file.filename;
 
         await pool.query(
-            "UPDATE users SET profile_image=$1 WHERE id=$2",
+            "UPDATE users SET profile_image = $1 WHERE id = $2",
             [image, user_id]
         );
 
         res.json({ message: "Profile updated", profile_image: image });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json("Error uploading profile");
+        console.error("UPLOAD ERROR:", err);
+        res.status(500).json({ error: "Error uploading profile" });
     }
 });
 
@@ -101,8 +104,8 @@ router.get("/search/:matric", async (req, res) => {
 
         res.json(user.rows[0]);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
+        console.error("SEARCH ERROR:", err.message);
+        res.status(500).json({ error: "Server Error" });
     }
 });
 
@@ -118,7 +121,7 @@ router.delete("/delete-account/:id", async (req, res) => {
 
         res.json({ message: "Account deleted successfully" });
     } catch (err) {
-        console.error("Delete Error:", err.message);
+        console.error("DELETE ERROR:", err.message);
         res.status(500).json({ error: "Server error: Check database constraints" });
     }
 });
@@ -127,8 +130,10 @@ router.delete("/delete-account/:id", async (req, res) => {
 router.get("/user/:id", async (req, res) => {
     try {
         const { id } = req.params;
+        
+        // Safely select columns (omitting 'points' if it doesn't exist in your table yet to prevent 500 crashes)
         const user = await pool.query(
-            "SELECT id, name, email, matric_no, points, profile_image FROM users WHERE id = $1", 
+            "SELECT id, name, email, matric_no, profile_image FROM users WHERE id = $1", 
             [id]
         );
 
@@ -139,7 +144,7 @@ router.get("/user/:id", async (req, res) => {
         res.json(user.rows[0]);
     } catch (err) {
         console.error("GET USER BY ID ERROR:", err.message);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error: " + err.message });
     }
 });
 
