@@ -9,8 +9,8 @@ async function loadPosts() {
   if (!feedContainer) return;
 
   try {
-    // BASE_URL comes directly from config.js
-    const res = await fetch(`${BASE_URL}/posts`);
+    // BASE_URL comes directly from config.js (Updated to /api/posts route)
+    const res = await fetch(`${BASE_URL}/api/posts`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     const posts = await res.json();
@@ -86,6 +86,7 @@ async function loadPosts() {
             <span style="font-size: 0.85rem; color: #737373;">
               ${(post.comments || []).length} comments
             </span>
+
           </div>
 
           <!-- Comments Feed -->
@@ -100,7 +101,7 @@ async function loadPosts() {
                 <div style="flex: 1;">
                   <p style="margin: 0; font-size: 0.85rem; color: #e5e5e5; line-height: 1.4;">
                     <strong style="color: #ffffff; cursor: pointer; text-decoration: underline;" onclick="goToProfile(${c.user_id})">${escapeHTML(c.name)}:</strong> 
-                    ${escapeHTML(c.comment)}
+                    ${escapeHTML(c.comment_text || c.comment)}
                   </p>
                 </div>
               </div>
@@ -148,7 +149,7 @@ async function addComment(postId) {
   if (!user || !user.id) return alert("Please log in to leave comments!");
 
   try {
-    const res = await fetch(`${BASE_URL}/comments`, {
+    const res = await fetch(`${BASE_URL}/api/comments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_id: postId, user_id: user.id, comment })
@@ -196,7 +197,7 @@ async function toggleLike(postId) {
   const likesSpan = document.getElementById(`likes-${postId}`);
 
   try {
-    const res = await fetch(`${BASE_URL}/posts/like/${postId}`, {
+    const res = await fetch(`${BASE_URL}/api/posts/like/${postId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: user.id })
@@ -246,7 +247,7 @@ async function executeSearch() {
   if (!matric) return alert("Please enter a Matric Number to search.");
 
   try {
-    const res = await fetch(`${BASE_URL}/auth/search/${encodeURIComponent(matric)}`);
+    const res = await fetch(`${BASE_URL}/api/auth/search/${encodeURIComponent(matric)}`);
     
     if (res.status === 404) {
       alert("No student found with that Matric Number.");
