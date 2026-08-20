@@ -1,6 +1,6 @@
 /*
 if (!user) {
-  window.location = "login.html";
+  window.location = "index.html";
 }*/
 
 async function login() {
@@ -62,7 +62,7 @@ async function register() {
     alert("Account created ✅");
 
     // Redirect to login
-    window.location = "login.html";
+    window.location = "index.html";
 
   } catch (err) {
     console.error(err);

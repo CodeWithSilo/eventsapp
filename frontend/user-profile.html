@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile - Campus Feed</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' * 'unsafe-inline' 'unsafe-eval' data: blob:;">
 
@@ -19,21 +22,20 @@
             min-height: 100%;
             background: #000;
             color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
             overflow-y: auto;
         }
 
         /* ================= NAVIGATION ================= */
-
         nav {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-evenly;
             align-items: center;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #222;
-            padding: 12px 0;
+            padding: 12px 10px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -41,25 +43,33 @@
 
         nav button {
             background: transparent;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+            color: #a3a3a3;
+            border: 1px solid transparent;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s ease;
+            font-weight: 600;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        nav button i {
+            font-size: 0.95rem;
         }
 
         nav button:hover {
-            background: #fff;
-            color: #000;
+            color: #000000;
+            background: #ffffff;
+            border-color: #ffffff;
         }
 
         /* ================= CONTAINER & CARDS ================= */
-
         .container {
             padding: 25px 20px 60px 20px;
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -67,11 +77,11 @@
         }
 
         .card {
-            background: #111;
-            border: 1px solid #222;
+            background: #0a0a0a;
+            border: 1px solid #262626;
             border-radius: 16px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -85,16 +95,17 @@
             height: 110px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #333;
+            border: 2px solid #ffffff;
             margin-bottom: 15px;
             background: #1e1e1e;
         }
 
         .profile-name {
-            font-size: 20px;
+            font-size: 1.25rem;
             font-weight: bold;
             margin-bottom: 20px;
-            letter-spacing: 0.5px;
+            letter-spacing: -0.01em;
+            color: #ffffff;
         }
 
         /* Info Grid Layout */
@@ -107,8 +118,8 @@
         }
 
         .info-box {
-            background: #0a0a0a;
-            border: 1px solid #222;
+            background: #000000;
+            border: 1px solid #262626;
             padding: 12px 16px;
             border-radius: 10px;
         }
@@ -116,7 +127,7 @@
         .info-box span.label {
             display: block;
             font-size: 11px;
-            color: #888;
+            color: #737373;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
@@ -130,38 +141,35 @@
         }
 
         /* ================= ACTION BUTTONS ================= */
-
         .btn-message {
-            background: #fff;
-            color: #000;
+            background: #ffffff;
+            color: #000000;
             border: none;
             padding: 14px 20px;
             border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 0.95rem;
             width: 100%;
             transition: 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
         }
 
         .btn-message:hover {
-            background: #e2e8f0;
-            transform: translateY(-1px);
+            opacity: 0.88;
         }
 
         /* ================= POSTS SECTION ================= */
-
         .posts-header h3 {
-            font-size: 18px;
+            font-size: 1.1rem;
             margin-bottom: 15px;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #222;
+            letter-spacing: -0.01em;
+            border-bottom: 1px solid #262626;
             padding-bottom: 10px;
+            color: #ffffff;
         }
 
         .posts-grid {
@@ -172,9 +180,9 @@
         }
 
         .post-card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
+            background: #0a0a0a;
+            border: 1px solid #262626;
+            border-radius: 16px;
             padding: 18px;
             text-align: left;
             display: flex;
@@ -183,37 +191,39 @@
         }
 
         .post-card h4 {
-            font-size: 16px;
+            font-size: 1.05rem;
             color: #fff;
         }
 
         .post-card p {
-            font-size: 14px;
-            color: #ccc;
-            line-height: 1.4;
+            font-size: 0.95rem;
+            color: #d4d4d4;
+            line-height: 1.5;
         }
 
         .post-meta {
             display: flex;
             gap: 15px;
-            font-size: 12px;
-            color: #888;
+            font-size: 0.78rem;
+            color: #737373;
             margin-top: 5px;
         }
 
         .post-card img {
             width: 100%;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 10px;
-            border: 1px solid #222;
+            border: 1px solid #262626;
+            max-height: 400px;
+            object-fit: cover;
         }
 
         /* ================= RESPONSIVE ================= */
-
         @media (max-width: 500px) {
             nav button {
-                font-size: 11px;
-                padding: 6px 4px;
+                font-size: 0.75rem;
+                padding: 6px 8px;
+                gap: 4px;
             }
 
             .info-grid {
@@ -221,7 +231,7 @@
             }
 
             .container {
-                padding: 15px 15px 50px 15px;
+                padding: 15px 12px 50px 12px;
             }
         }
     </style>
@@ -230,11 +240,22 @@
 
     <!-- Main Navigation Bar -->
     <nav>
-        <button onclick="location.href='feed.html'">🏠 Feed</button>
-        <button onclick="location.href='create-post.html'">➕ Post</button>
-        <button onclick="location.href='map.html'">📍 Map</button>
-        <button onclick="location.href='inbox.html'">✉️ Inbox</button>
-        <button onclick="location.href='profile.html'">👤 Profile</button>
+        <button onclick="location.href='feed.html'">
+            <i class="fa-solid fa-house"></i>
+            <span>Feed</span>
+        </button>
+        <button onclick="location.href='create-post.html'">
+            <i class="fa-solid fa-square-plus"></i>
+            <span>Post</span>
+        </button>
+        <button onclick="location.href='inbox.html'">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Inbox</span>
+        </button>
+        <button onclick="location.href='profile.html'">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </button>
     </nav>
 
     <!-- Main Content Area -->
@@ -242,7 +263,7 @@
         
         <!-- Profile Card -->
         <div class="card">
-            <img id="userPic" src="images/default.png" alt="Profile Picture">
+            <img id="userPic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23a3a3a3'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.8-.85-5.05-2.2.03-1.68 3.37-2.6 5.05-2.6s5.02.92 5.05 2.6C15.8 19.15 14.03 20 12 20z'/></svg>" alt="Profile Picture">
             <h2 id="userName" class="profile-name">Loading...</h2>
 
             <!-- Structured User Information Grid -->
@@ -261,7 +282,7 @@
                 </div>
                 <div class="info-box">
                     <span class="label">Status</span>
-                    <span class="value" style="color: #22c55e;">Verified Student</span>
+                    <span class="value" style="color: #ffffff;">Verified Student</span>
                 </div>
             </div>
         </div>
@@ -279,15 +300,13 @@
 
     </div>
 
-    <!-- JavaScript Execution -->
+    <!-- Configuration and Profile Logic -->
+    <script src="js/config.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const targetUserId = params.get("id");
         
-        // Dynamically switch between localhost and live backend URL if needed
-        const BASE_URL = window.location.hostname === "localhost" 
-            ? "http://localhost:5000" 
-            : "https://campus-events-backend.onrender.com"; // Updates to your live server automatically
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23a3a3a3'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.8-.85-5.05-2.2.03-1.68 3.37-2.6 5.05-2.6s5.02.92 5.05 2.6C15.8 19.15 14.03 20 12 20z'/></svg>";
 
         async function loadPublicProfile() {
             if (!targetUserId) {
@@ -316,10 +335,9 @@
                 if (userPicEl) {
                     userPicEl.src = user.profile_image 
                         ? `${BASE_URL}/uploads/${user.profile_image}` 
-                        : `images/default.png`;
+                        : DEFAULT_AVATAR;
                 }
 
-                // Fetch posts created by this specific student
                 loadUserPosts();
 
             } catch (err) {
@@ -327,7 +345,7 @@
                 document.getElementById("userName").textContent = "User not found";
                 const postsContainer = document.getElementById("userPosts");
                 if (postsContainer) {
-                    postsContainer.innerHTML = "<p style='color:#ef4444; text-align:center;'>Could not load this user's profile.</p>";
+                    postsContainer.innerHTML = "<p style='color:#a3a3a3; text-align:center;'>Could not load this user's profile.</p>";
                 }
             }
         }
@@ -345,7 +363,7 @@
                 postsContainer.innerHTML = ""; 
 
                 if (!posts || posts.length === 0) {
-                    postsContainer.innerHTML = "<p style='color:#666; text-align:center; padding: 20px 0;'>This student hasn't posted anything yet.</p>";
+                    postsContainer.innerHTML = "<p style='color:#737373; text-align:center; padding: 20px 0;'>This student hasn't posted anything yet.</p>";
                     return;
                 }
 
@@ -371,7 +389,7 @@
                 console.error("Error loading posts:", err);
                 const postsContainer = document.getElementById("userPosts");
                 if (postsContainer) {
-                    postsContainer.innerHTML = "<p style='color:#ef4444;'>Error loading posts.</p>";
+                    postsContainer.innerHTML = "<p style='color:#737373;'>Error loading posts.</p>";
                 }
             }
         }
