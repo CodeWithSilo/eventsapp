@@ -5,7 +5,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const postId = urlParams.get("id");
 
     if (!postId) {
-        document.getElementById("single-post-container").innerHTML = `<p style="text-align:center; color:#a3a3a3; padding:30px;">Post not found.</p>`;
+        document.getElementById("single-post-container").innerHTML = `<p style="text-align:center; color:#a3a3a3; padding:30px;">Post ID not found in URL.</p>`;
         return;
     }
 
@@ -14,10 +14,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 async function loadSinglePost(postId) {
     const container = document.getElementById("single-post-container");
+    if (!container) return;
 
     try {
         const res = await fetch(`${BASE_URL}/posts/${postId}`);
-        if (!res.ok) throw new Error("Failed to load post");
+        if (!res.ok) throw new Error("Failed to fetch post details");
 
         const post = await res.json();
         const userProfileImg = post.profile_image ? `${BASE_URL}/uploads/${post.profile_image}` : DEFAULT_AVATAR;
@@ -52,12 +53,12 @@ async function loadSinglePost(postId) {
 
                 <!-- Stats -->
                 <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #262626; border-bottom: 1px solid #262626; padding: 10px 4px; margin-bottom: 20px;">
-                    <span style="font-size: 0.88rem; color: #a3a3a3;"><strong>${post.likes || 0}</strong> likes</span>
+                    <span style="font-size: 0.88rem; color: #a3a3a3;"><strong style="color: #ffffff;">${post.likes || 0}</strong> likes</span>
                     <span style="font-size: 0.85rem; color: #737373;">${comments.length} comments</span>
                 </div>
 
                 <!-- Comments List -->
-                <div id="comments-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <div id="comments-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 350px; overflow-y: auto;">
                     ${comments.length === 0 ? `<p style="color: #737373; font-size: 0.9rem; text-align: center; padding: 10px;">No comments yet. Be the first!</p>` : ''}
                     ${comments.map(c => `
                         <div style="display: flex; align-items: flex-start; gap: 10px; background: #000000; border: 1px solid #262626; padding: 10px 12px; border-radius: 10px;">
@@ -72,10 +73,21 @@ async function loadSinglePost(postId) {
                     `).join("")}
                 </div>
 
-                <!-- Comment Form -->
-                <div class="comment-input-box">
-                    <input id="new-comment-input" type="text" placeholder="Write a comment..." onkeypress="if(event.key === 'Enter') addComment(${post.id})" />
-                    <button onclick="addComment(${post.id})">Send</button>
+                <!-- Comment Input Box -->
+                <div style="display: flex; gap: 8px; align-items: center; border-top: 1px solid #262626; padding-top: 16px;">
+                    <input 
+                        id="new-comment-input" 
+                        type="text" 
+                        placeholder="Write a comment..." 
+                        onkeypress="if(event.key === 'Enter') addComment(${post.id})"
+                        style="flex: 1; background: #000000; color: #ffffff; border: 1px solid #262626; padding: 10px 14px; border-radius: 20px; font-size: 0.88rem; outline: none;" 
+                    />
+                    <button 
+                        onclick="addComment(${post.id})" 
+                        style="background: #ffffff; color: #000000; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer;"
+                    >
+                        Send
+                    </button>
                 </div>
 
             </article>
@@ -83,7 +95,7 @@ async function loadSinglePost(postId) {
 
     } catch (err) {
         console.error("Error loading single post:", err);
-        container.innerHTML = `<p style="text-align:center; color:#a3a3a3; padding:30px;">Error loading post details.</p>`;
+        container.innerHTML = `<p style="text-align:center; color:#a3a3a3; padding:30px;">Error loading post details. Check console.</p>`;
     }
 }
 
@@ -105,10 +117,10 @@ async function addComment(postId) {
         });
 
         if (res.ok) {
-            // Reload the post to show the new comment instantly
-            loadSinglePost(postId);
+            input.value = "";
+            loadSinglePost(postId); // Refresh to display the new comment instantly
         } else {
-            const data = await res.json();
+            const data =.await res.json();
             alert(data.error || "Failed to post comment.");
         }
     } catch (err) {
