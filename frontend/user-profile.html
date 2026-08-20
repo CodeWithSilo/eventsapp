@@ -4,355 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile - Campus Feed</title>
-    <link rel="stylesheet" href="css/style.css">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' http://localhost:5000 data:; connect-src 'self' http://localhost:5000;">
-
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            width: 100%;
-            min-height: 100%;
-            background: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        /* ================= NAVIGATION ================= */
-
-        nav {
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #222;
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            justify-content: center;
+            min-height: 100vh;
         }
-
-        nav button {
-            background: transparent;
-            color: #fff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s ease;
-        }
-
-        nav button:hover {
-            background: #fff;
-            color: #000;
-        }
-
-        /* ================= CONTAINER & CARDS ================= */
-
         .container {
-            padding: 25px 20px 60px 20px;
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.02);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
             width: 100%;
+            max-width: 600px;
+            padding: 20px 16px;
         }
-
-        /* User Avatar Styling */
-        #userPic {
-            width: 110px;
-            height: 110px;
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #262626;
+            padding-bottom: 16px;
+        }
+        header button {
+            background: transparent;
+            border: 1px solid #262626;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        header h1 { font-size: 1.1rem; font-weight: 600; }
+        
+        .profile-card {
+            background: #0a0a0a;
+            border: 1px solid #262626;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .profile-card img {
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #333;
-            margin-bottom: 15px;
-            background: #1e1e1e;
+            border: 2px solid #ffffff;
+            margin-bottom: 14px;
         }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Info Grid Layout */
-        .info-grid {
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            text-align: left;
-        }
-
-        .info-box {
-            background: #0a0a0a;
-            border: 1px solid #222;
-            padding: 12px 16px;
-            border-radius: 10px;
-        }
-
-        .info-box span.label {
-            display: block;
-            font-size: 11px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .info-box span.value {
-            font-size: 14px;
-            color: #fff;
-            font-weight: bold;
-            word-break: break-all;
-        }
-
-        /* ================= ACTION BUTTONS ================= */
-
-        .btn-message {
-            background: #fff;
-            color: #000;
+        .profile-card h2 { font-size: 1.25rem; margin-bottom: 4px; color: #ffffff; }
+        .profile-card p { color: #a3a3a3; font-size: 0.88rem; margin-bottom: 6px; }
+        
+        .message-btn {
+            background: #ffffff;
+            color: #000000;
             border: none;
-            padding: 14px 20px;
-            border-radius: 12px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.88rem;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            width: 100%;
-            transition: 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            margin-top: 14px;
         }
 
-        .btn-message:hover {
-            background: #e2e8f0;
-            transform: translateY(-1px);
-        }
-
-        /* ================= POSTS SECTION ================= */
-
-        .posts-header h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 10px;
-        }
-
-        .posts-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .post-card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 18px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .post-card h4 {
-            font-size: 16px;
-            color: #fff;
-        }
-
-        .post-card p {
-            font-size: 14px;
-            color: #ccc;
-            line-height: 1.4;
-        }
-
-        .post-meta {
-            display: flex;
-            gap: 15px;
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        .post-card img {
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid #222;
-        }
-
-        /* ================= RESPONSIVE ================= */
-
-        @media (max-width: 500px) {
-            nav button {
-                font-size: 11px;
-                padding: 6px 4px;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                padding: 15px 15px 50px 15px;
-            }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #262626;
+            padding-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Main Navigation Bar -->
-    <nav>
-        <button onclick="location.href='feed.html'">🏠 Feed</button>
-        <button onclick="location.href='create-post.html'">➕ Post</button>
-        <button onclick="location.href='map.html'">📍 Map</button>
-        <button onclick="location.href='inbox.html'">✉️ Inbox</button>
-        <button onclick="location.href='profile.html'">👤 Profile</button>
-    </nav>
-
-    <!-- Main Content Area -->
     <div class="container">
-        
-        <!-- Profile Card -->
-        <div class="card">
-            <img id="userPic" src="images/default.png" alt="Profile Picture">
-            <h2 id="userName" class="profile-name">Loading...</h2>
+        <header>
+            <button onclick="window.history.back()">← Back</button>
+            <h1 id="header-title">Student Profile</h1>
+        </header>
 
-            <!-- Structured User Information Grid -->
-            <div class="info-grid">
-                <div class="info-box">
-                    <span class="label">Email</span>
-                    <span class="value" id="userEmail">-</span>
-                </div>
-                <div class="info-box">
-                    <span class="label">Matric Number</span>
-                    <span class="value" id="userMatric">-</span>
-                </div>
-                <div class="info-box">
-                    <span class="label">Campus Points</span>
-                    <span class="value" id="userPoints">0</span>
-                </div>
-                <div class="info-box">
-                    <span class="label">Status</span>
-                    <span class="value" style="color: #22c55e;">Verified Student</span>
-                </div>
-            </div>
+        <!-- User Bio Info Container -->
+        <div id="profile-info-container">
+            <p style="text-align: center; color: #737373; padding: 20px;">Loading profile...</p>
         </div>
 
-        <!-- Direct Action Section -->
-        <button class="btn-message" onclick="goToChat()">
-            💬 Message this Student
-        </button>
-
-        <!-- Posts Section -->
-        <div class="posts-header">
-            <h3>Posts by this Student</h3>
-            <div id="userPosts" class="posts-grid"></div>
+        <!-- User Posts Container -->
+        <h3 class="section-title">Student Posts</h3>
+        <div id="user-posts-container">
+            <p style="text-align: center; color: #737373; padding: 20px;">Loading posts...</p>
         </div>
-
     </div>
 
-    <!-- JavaScript Execution -->
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const targetUserId = params.get("id");
-        const BASE_URL = "http://localhost:5000";
-
-        async function loadPublicProfile() {
-            if (!targetUserId) return;
-
-            try {
-                const res = await fetch(`${BASE_URL}/auth/user/${targetUserId}`);
-                const user = await res.json();
-
-                document.getElementById("userName").textContent = user.name || "Student";
-                document.getElementById("userEmail").textContent = user.email || "-";
-                document.getElementById("userMatric").textContent = user.matric_no || "-";
-                document.getElementById("userPoints").textContent = user.points || 0;
-                document.getElementById("userPic").src = user.profile_image 
-                    ? `${BASE_URL}/uploads/${user.profile_image}` 
-                    : `images/default.png`;
-
-                // Fetch posts created by this specific student
-                loadUserPosts();
-
-            } catch (err) {
-                console.error("Error loading profile:", err);
-            }
-        }
-
-        async function loadUserPosts() {
-            try {
-                const res = await fetch(`${BASE_URL}/posts/user/${targetUserId}`);
-                const posts = await res.json();
-
-                const postsContainer = document.getElementById("userPosts");
-                postsContainer.innerHTML = ""; 
-
-                if (!posts || posts.length === 0) {
-                    postsContainer.innerHTML = "<p style='color:#666; text-align:center; padding: 20px 0;'>This student hasn't posted anything yet.</p>";
-                    return;
-                }
-
-                let postsHTML = "";
-                posts.forEach(post => {
-                    postsHTML += `
-                        <div class="post-card">
-                            <h4>${post.title || "Untitled Post"}</h4>
-                            <p>${post.description || ""}</p>
-                            
-                            ${post.image ? `<img src="${BASE_URL}/uploads/${post.image}" alt="Post Image">` : ""}
-                            
-                            <div class="post-meta">
-                                <span>📍 ${post.location || "Campus"}</span>
-                                <span>📅 ${post.date || "Recently"} ${post.time || ""}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                postsContainer.innerHTML = postsHTML;
-
-            } catch (err) {
-                console.error("Error loading posts:", err);
-                document.getElementById("userPosts").innerHTML = "<p style='color:#ef4444;'>Error loading posts.</p>";
-            }
-        }
-
-        function goToChat() {
-            if (targetUserId) {
-                window.location.href = `chat.html?id=${targetUserId}`;
-            }
-        }
-
-        // Initialize Page
-        loadPublicProfile();
-    </script>
+    <script src="config.js"></script>
+    <script src="user-profile.js"></script>
 </body>
 </html>
