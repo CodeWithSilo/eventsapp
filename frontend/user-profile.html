@@ -281,18 +281,29 @@
 
     <!-- JavaScript Execution -->
     <!-- JavaScript Execution -->
+   <!-- JavaScript Execution -->
     <script>
         const params = new URLSearchParams(window.location.search);
         const targetUserId = params.get("id");
         const BASE_URL = "http://localhost:5000";
 
         async function loadPublicProfile() {
-            if (!targetUserId) return;
+            if (!targetUserId) {
+                document.getElementById("userName").textContent = "No user specified";
+                return;
+            }
 
             try {
                 const res = await fetch(`${BASE_URL}/auth/user/${targetUserId}`);
-                if (!res.ok) throw new Error("Failed to fetch user");
+                
+                if (!res.ok) {
+                    throw new Error("User not found in database");
+                }
+
                 const user = await res.json();
+                if (!user) {
+                    throw new Error("Empty user data received");
+                }
 
                 document.getElementById("userName").textContent = user.name || "Student";
                 document.getElementById("userEmail").textContent = user.email || "-";
@@ -311,12 +322,19 @@
 
             } catch (err) {
                 console.error("Error loading profile:", err);
+                document.getElementById("userName").textContent = "User not found";
+                const postsContainer = document.getElementById("userPosts");
+                if (postsContainer) {
+                    postsContainer.innerHTML = "<p style='color:#ef4444; text-align:center;'>Could not load this user's profile.</p>";
+                }
             }
         }
 
         async function loadUserPosts() {
             try {
                 const res = await fetch(`${BASE_URL}/posts/user/${targetUserId}`);
+                if (!res.ok) return;
+                
                 const posts = await res.json();
 
                 const postsContainer = document.getElementById("userPosts");
