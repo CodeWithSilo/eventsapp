@@ -15,12 +15,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Routes
-app.use("/auth", require("./routes/auth"));
-app.use("/events", require("./routes/events"));
-app.use("/posts", require("./routes/posts"));
-app.use("/comments", require("./routes/comments"));
-app.use("/messages", require("./routes/messages"));
-
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/events", require("./routes/events"));
+app.use("/api/posts", require("./routes/posts"));
+app.use("/api/comments", require("./routes/comments"));
+app.use("/api/messages", require("./routes/messages"));
 // Default route
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/login.html"));
