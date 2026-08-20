@@ -13,11 +13,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// backend/routes/posts.js
-
-
-
-
 // ===================== CREATE POST =====================
 router.post("/upload", upload.single("image"), async (req, res) => {
   try {
@@ -29,10 +24,10 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     const postVisibility = visibility || 'public';
 
     const post = await pool.query(
-  `INSERT INTO posts(user_id, event_id, caption, title, location, date, time, description, image, visibility)
-   VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-  [user_id, event_id, caption, title, location, date, time, description, image, postVisibility]
-);
+      `INSERT INTO posts(user_id, event_id, caption, title, location, date, time, description, image, visibility)
+       VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      [user_id, event_id, caption, title, location, date, time, description, image, postVisibility]
+    );
 
     res.json(post.rows[0]);
   } catch (err) {
@@ -40,14 +35,15 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 // ===================== GET ALL POSTS =====================
 router.get("/", async (req, res) => {
   try {
     const posts = await pool.query(`
       SELECT posts.id, posts.user_id, posts.event_id, posts.caption, posts.title, posts.location,
-              posts.date, posts.time, posts.description, posts.image, posts.created_at,
-              users.name, users.profile_image,
-              COUNT(likes.id) AS likes
+             posts.date, posts.time, posts.description, posts.image, posts.created_at,
+             users.name, users.profile_image,
+             COUNT(likes.id) AS likes
       FROM posts
       JOIN users ON posts.user_id = users.id
       LEFT JOIN likes ON posts.id = likes.post_id
@@ -83,17 +79,14 @@ router.post("/like/:postId", async (req, res) => {
     const { user_id } = req.body;
     const { postId } = req.params;
 
-    // Check if user already liked
     const existing = await pool.query(
       "SELECT * FROM likes WHERE post_id=$1 AND user_id=$2",
       [postId, user_id]
     );
 
     if (existing.rows.length === 0) {
-      // Like
       await pool.query("INSERT INTO likes(post_id,user_id) VALUES($1,$2)", [postId, user_id]);
     } else {
-      // Unlike
       await pool.query("DELETE FROM likes WHERE post_id=$1 AND user_id=$2", [postId, user_id]);
     }
 
@@ -104,9 +97,7 @@ router.post("/like/:postId", async (req, res) => {
   }
 });
 
-
-
-// Ensure this is ABOVE router.delete("/:postId")
+// ===================== UPDATE VISIBILITY =====================
 router.put("/update-visibility/:postId", async (req, res) => {
     try {
         const { postId } = req.params;
@@ -128,14 +119,12 @@ router.put("/update-visibility/:postId", async (req, res) => {
     }
 });
 
-
 // ===================== DELETE POST =====================
 router.delete("/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
     const { user_id } = req.body;
 
-    // Ensure user can only delete their own post
     const postCheck = await pool.query(
       "SELECT * FROM posts WHERE id=$1 AND user_id=$2",
       [postId, user_id]
@@ -150,54 +139,6 @@ router.delete("/:postId", async (req, res) => {
 
   } catch (err) {
     console.error("DELETE POST ERROR:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// ===================== GET MY POSTS (FOR PROFILE) =====================
-// backend/routes/posts.js
-
-// backend/routes/posts.js
-// backend/routes/posts.js
-
-router.get("/user/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    
-    const posts = await pool.query(`
-      SELECT 
-        posts.*,                      -- Selects all columns including visibility
-        users.name, 
-        users.profile_image,
-        COUNT(likes.id) AS likes
-      FROM posts
-      JOIN users ON posts.user_id = users.id
-      LEFT JOIN likes ON posts.id = likes.post_id
-      WHERE posts.user_id = $1
-      GROUP BY 
-        posts.id,                     -- Primary Key allows posts.* in most Postgres setups
-        users.name, 
-        users.profile_image
-      ORDER BY posts.created_at DESC
-    `, [userId]);
-
-    const result = [];
-    for (let post of posts.rows) {
-      const comments = await pool.query(`
-        SELECT comments.*, users.name, users.profile_image
-        FROM comments
-        JOIN users ON comments.user_id = users.id
-        WHERE comments.post_id=$1
-        ORDER BY comments.id DESC
-      `, [post.id]);
-
-      result.push({ ...post, comments: comments.rows });
-    }
-
-    res.json(result);
-  } catch (err) {
-    // Check your VS Code terminal to see the EXACT error message here
-    console.error("DATABASE ERROR:", err.message); 
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -240,6 +181,48 @@ router.get("/:id", async (req, res) => {
     res.json(post);
   } catch (err) {
     console.error("GET SINGLE POST ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ===================== GET MY POSTS (FOR PROFILE) =====================
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const posts = await pool.query(`
+      SELECT 
+        posts.*,                      
+        users.name, 
+        users.profile_image,
+        COUNT(likes.id) AS likes
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      LEFT JOIN likes ON posts.id = likes.post_id
+      WHERE posts.user_id = $1
+      GROUP BY 
+        posts.id,                    
+        users.name, 
+        users.profile_image
+      ORDER BY posts.created_at DESC
+    `, [userId]);
+
+    const result = [];
+    for (let post of posts.rows) {
+      const comments = await pool.query(`
+        SELECT comments.*, users.name, users.profile_image
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.post_id=$1
+        ORDER BY comments.id DESC
+      `, [post.id]);
+
+      result.push({ ...post, comments: comments.rows });
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.error("DATABASE ERROR:", err.message); 
     res.status(500).json({ error: "Server error" });
   }
 });
