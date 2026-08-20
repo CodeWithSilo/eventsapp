@@ -9,8 +9,7 @@ async function loadPosts() {
   if (!feedContainer) return;
 
   try {
-    // BASE_URL comes directly from config.js (Updated to /api/posts route)
-    const res = await fetch(`${BASE_URL}/api/posts`);
+    const res = await fetch(`${BASE_URL}/posts`);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     const posts = await res.json();
@@ -37,6 +36,8 @@ async function loadPosts() {
       const userProfileImg = post.profile_image 
         ? `${BASE_URL}/uploads/${post.profile_image}` 
         : DEFAULT_AVATAR;
+
+      const commentCount = (post.comments || []).length;
 
       allPostsHTML += `
         <article class="post-card" id="post-${post.id}" style="background: #0a0a0a; border: 1px solid #262626; border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);">
@@ -73,7 +74,7 @@ async function loadPosts() {
           ` : ""}
 
           <!-- Action & Stats Bar -->
-          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #262626; border-bottom: 1px solid #262626; padding: 10px 4px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #262626; border-bottom: 1px solid #262626; padding: 10px 4px;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <button onclick="toggleLike(${post.id})" id="like-btn-${post.id}" style="background: #ffffff; color: #000000; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s ease;">
                 🖤 Like
@@ -83,45 +84,8 @@ async function loadPosts() {
               </span>
             </div>
             
-            <span style="font-size: 0.85rem; color: #737373;">
-              ${(post.comments || []).length} comments
-            </span>
-
-          </div>
-
-          <!-- Comments Feed -->
-          <div class="comments" id="comments-${post.id}" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 250px; overflow-y: auto; padding-right: 4px;">
-            ${(post.comments || []).map(c => `
-              <div style="display: flex; align-items: flex-start; gap: 10px; background: #000000; border: 1px solid #262626; padding: 8px 12px; border-radius: 10px;">
-                <img 
-                  src="${c.profile_image ? `${BASE_URL}/uploads/${c.profile_image}` : DEFAULT_AVATAR}" 
-                  onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" 
-                  style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-top: 2px; border: 1px solid #404040;" 
-                />
-                <div style="flex: 1;">
-                  <p style="margin: 0; font-size: 0.85rem; color: #e5e5e5; line-height: 1.4;">
-                    <strong style="color: #ffffff; cursor: pointer; text-decoration: underline;" onclick="goToProfile(${c.user_id})">${escapeHTML(c.name)}:</strong> 
-                    ${escapeHTML(c.comment_text || c.comment)}
-                  </p>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-
-          <!-- Comment Input Form -->
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input 
-              id="comment-${post.id}" 
-              type="text" 
-              placeholder="Write a comment..." 
-              onkeypress="if(event.key === 'Enter') addComment(${post.id})"
-              style="flex: 1; background: #000000; color: #ffffff; border: 1px solid #262626; padding: 10px 14px; border-radius: 20px; font-size: 0.88rem; outline: none;" 
-            />
-            <button 
-              onclick="addComment(${post.id})" 
-              style="background: #ffffff; color: #000000; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: opacity 0.2s ease;"
-            >
-              Send
+            <button onclick="openPostComments(${post.id})" style="background: transparent; border: none; color: #a3a3a3; font-size: 0.85rem; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+              💬 <span>${commentCount} comments</span>
             </button>
           </div>
 
@@ -137,59 +101,7 @@ async function loadPosts() {
   }
 }
 
-// ================= 2. ADD COMMENT =================
-async function addComment(postId) {
-  const input = document.getElementById(`comment-${postId}`);
-  if (!input) return;
-
-  const comment = input.value.trim();
-  if (!comment) return;
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user.id) return alert("Please log in to leave comments!");
-
-  try {
-    const res = await fetch(`${BASE_URL}/api/comments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ post_id: postId, user_id: user.id, comment })
-    });
-
-    if (res.ok) {
-      const profileImg = user.profile_image ? `${BASE_URL}/uploads/${user.profile_image}` : DEFAULT_AVATAR;
-      const commentsDiv = document.getElementById(`comments-${postId}`);
-      
-      const newCommentHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 10px; background: #000000; border: 1px solid #262626; padding: 8px 12px; border-radius: 10px;">
-          <img 
-            src="${profileImg}" 
-            onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" 
-            style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-top: 2px; border: 1px solid #404040;" 
-          />
-          <div style="flex: 1;">
-            <p style="margin: 0; font-size: 0.85rem; color: #e5e5e5; line-height: 1.4;">
-              <strong style="color: #ffffff; cursor: pointer; text-decoration: underline;" onclick="goToProfile(${user.id})">${escapeHTML(user.name || "You")}:</strong> 
-              ${escapeHTML(comment)}
-            </p>
-          </div>
-        </div>
-      `;
-      
-      if (commentsDiv) {
-        commentsDiv.insertAdjacentHTML('beforeend', newCommentHTML);
-        commentsDiv.scrollTop = commentsDiv.scrollHeight;
-      }
-      input.value = "";
-    } else {
-      const data = await res.json();
-      alert(data.error || "Failed to post comment.");
-    }
-  } catch (err) {
-    console.error("Error adding comment:", err);
-  }
-}
-
-// ================= 3. TOGGLE LIKE =================
+// ================= 2. TOGGLE LIKE =================
 async function toggleLike(postId) {
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user || !user.id) return alert("Please log in first!");
@@ -197,7 +109,7 @@ async function toggleLike(postId) {
   const likesSpan = document.getElementById(`likes-${postId}`);
 
   try {
-    const res = await fetch(`${BASE_URL}/api/posts/like/${postId}`, {
+    const res = await fetch(`${BASE_URL}/posts/like/${postId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: user.id })
@@ -216,7 +128,11 @@ async function toggleLike(postId) {
   }
 }
 
-// ================= 4. NAVIGATION & UTILITIES =================
+// ================= 3. NAVIGATION & UTILITIES =================
+function openPostComments(postId) {
+  window.location.href = `post-detail.html?id=${postId}`;
+}
+
 function goToProfile(clickedId) {
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   
@@ -247,7 +163,7 @@ async function executeSearch() {
   if (!matric) return alert("Please enter a Matric Number to search.");
 
   try {
-    const res = await fetch(`${BASE_URL}/api/auth/search/${encodeURIComponent(matric)}`);
+    const res = await fetch(`${BASE_URL}/auth/search/${encodeURIComponent(matric)}`);
     
     if (res.status === 404) {
       alert("No student found with that Matric Number.");
