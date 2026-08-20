@@ -14,6 +14,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
+const fs = require("fs");
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 // Routes
 app.use("/auth", require("./routes/auth"));
 app.use("/events", require("./routes/events"));
