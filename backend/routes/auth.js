@@ -150,4 +150,23 @@ router.delete("/delete-account/:id", async (req, res) => {
     }
 });
 
+// ===================== GET USER BY ID =====================
+router.get("/user/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await pool.query(
+            "SELECT id, name, email, matric_no, points, profile_image FROM users WHERE id = $1", 
+            [id]
+        );
+
+        if (user.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.json(user.rows[0]);
+    } catch (err) {
+        console.error("GET USER BY ID ERROR:", err.message);
+        res.status(500).json({ error: "Server error" });
+    }
+});
 module.exports = router;
