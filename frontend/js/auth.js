@@ -8,7 +8,7 @@ async function login() {
   const password = document.getElementById("password").value;
 
   try {
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -44,7 +44,7 @@ async function register() {
   }
 
   try {
-    const res = await fetch(`${API_URL}/auth/register`, {
+    const res = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ name, email, password, matric_no })
